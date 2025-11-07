@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Connect MetaMask Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.6.0/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+  <button id="connectButton">Connect MetaMask</button>
+  <p id="walletAddress"></p>
+
+  <script>
+    const connectButton = document.getElementById('connectButton');
+    const walletAddress = document.getElementById('walletAddress');
+
+    connectButton.addEventListener('click', async () => {
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          // Request wallet connection
+          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+          // Get first wallet address
+          const account = accounts[0];
+          walletAddress.textContent = `Connected: ${account}`;
+
+          // (Optional) Create provider for later transactions
+          const provider = new ethers.BrowserProvider(window.ethereum);
+          console.log("Provider:", provider);
+        } catch (err) {
+          console.error("User rejected connection:", err);
+        }
+      } else {
+        alert('MetaMask is not installed! Please install it: https://metamask.io/');
+      }
+    });
+  </script>
+</body>
+</html>
