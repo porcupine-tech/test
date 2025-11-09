@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connect Wallet and Get Balance</title>
+</head>
+<body>
+  <button id="connectWallet">Connect Wallet</button>
+  <p id="address"></p>
+  <p id="balance"></p>
+
+  <!-- Load Ethers.js -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.11.1/dist/ethers.min.js"></script>
+
+  <script type="module">
+    const connectBtn = document.getElementById('connectWallet');
+    const addressEl = document.getElementById('address');
+    const balanceEl = document.getElementById('balance');
+
+    connectBtn.addEventListener('click', async () => {
+      if (!window.ethereum) {
+        alert('MetaMask not detected. Please install it: https://metamask.io/');
+        return;
+      }
+
+      try {
+        // Request wallet connection
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const userAddress = accounts[0];
+        addressEl.textContent = `Address: ${userAddress}`;
+
+        // Create provider + signer
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+
+        // Get and show balance
+        const balance = await provider.getBalance(await signer.getAddress());
+        const ethBalance = ethers.formatEther(balance);
+        balanceEl.textContent = `Balance: ${ethBalance} ETH`;
+
+        console.log('ETH Balance:', ethBalance);
+      } catch (err) {
+        console.error('Connection error:', err);
+      }
+    });
+  </script>
+</body>
+</html>
